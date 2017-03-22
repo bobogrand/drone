@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <vector>
 #define MAX_INPUT 16
 
 struct knapsack {
