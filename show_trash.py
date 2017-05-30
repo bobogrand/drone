@@ -60,8 +60,6 @@ for e in range(1,5000):
     trash.append(pla)
     trash.append(can)
     trash.append(glass)
-    
-    
     first = trash.index(max(trash))
 
     who = 'others'
@@ -73,8 +71,11 @@ for e in range(1,5000):
             who = "can!"
         elif first ==2:
             who = 'glass!'
+    else:
+        first =3
     print(who)
-
+    first += 1
+    myPort.write(first.encode())
     chart = plt.plot(spect)
     plt.grid(True)
     plt.show()
