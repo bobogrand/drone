@@ -25,6 +25,7 @@ int count = 0;          // count of steps made
 int countt = 0;
 int inputs;
 int serialFlag=0;
+int flag=0;
 int countsperrev = 510; // number of steps per full revolution- actually 509.5 as gear ratio is 63.684:1 apx
 int revolutionsCW = 1; // number of revs required clockwise
 int revolutionsCCW = 3; // number of revs required counterclockwise
@@ -100,6 +101,7 @@ void t_anticlockwise()
     setOutputt(i);
     delayMicroseconds(motorSpeed);
   }
+  
 }
 
 void t_clockwise()
@@ -119,122 +121,77 @@ void stopwise()
   }
 }
 
-void stepper(int dir){
-  /*
-  if(dir==1){  // plastic
+void stepper(char dir){
+  
+  if(dir=='1'){  // plastic
     if(count < 382){   //move bottom_anticlockwise durint 382
-      if(count==1) Serial.println("bottom-anticlockwise");
       b_anticlockwise();
     }
     else if(count < 382 *3){ //move top_anticlockwise durint 382*2
-      if(count==382) Serial.println("top-anticlockwise");
       t_anticlockwise();
     }
     else if(count < 100 + 382 *3){ //stop during 100
       stopwise();
     }
     else if(count < 100 + 382 *4){        ////bottom_clockwise durint 382
-      if(count==382*3+100) Serial.println("bottom-clockwise");
       b_clockwise();
     }
     else if(count < 100 + 382 *6){        ////top_clockwise durint 382*2
-      if(count==382*4+100) Serial.println("top-clockwise");
       t_clockwise();
     }
     else{
       count = 0;
-      serialFlag = 1;
+      flag = 1;
     }
     count++;
   }
 
-  if(dir==2){  // can
+  if(dir=='2'){  // can
     if(count < 382){   //move bottom_anticlockwise durint 382
-      if(count==1) Serial.println("bottom-clockwise");
       b_clockwise();
     }
     else if(count < 382 *3){ //move top_clockwise durint 382*2
-      if(count==382) Serial.println("top-anticlockwise");
       t_anticlockwise();
     }
     else if(count < 100 + 382 *3){ //stop during 100
       stopwise();
     }
     else if(count < 100 + 382 *4){        ////bottom_anticlockwise durint 382
-      if(count==382*3+100) Serial.println("bottom-anticlockwise");
       b_anticlockwise();
     }
     else if(count < 100 + 382 *6){        ////top_anticlockwise durint 382*2
-      if(count==382*4+100) Serial.println("top-clockwise");
       t_clockwise();
     }
     else{
       count = 0;
-      serialFlag = 1;
+      flag = 1;
     }
     count++;
   }
 
-  if(dir==3){
+  if(dir=='3'){
     if(count < 382*2){   //move top_clockwise durint 382*2
-      if(count==1) Serial.println("t-clockwise");
       t_clockwise();
     }
     else if(count < 100 + 382 *2){ //stop during 100
       stopwise();
     }
     else if(count < 100 + 382 *4){  //move top_clockwise durint 382*2
-      if(count==100 + 382*2) Serial.println("t-anticlockwise");
       t_anticlockwise();
     }
     else{
       count = 0;
-      serialFlag = 1;
+      flag = 1;
     }
   count++;
   }
   else
-    serialFlag = 1;
-}*/
-  if(dir==1){
-    if(count < 382*2){
-      t_anticlockwise();
-    }
-    else if(count < 382*3){
-      stopwise();
-    }
-    else if(count < 382*5){
-      t_clockwise();
-    }
-    else{
-      count = 0;
-      serialFlag = 1;
-    }
-  count++;
-  }
-  else if(dir==2){
-    if(count < 382*2 ){
-      t_clockwise();
-    }
-    else if(count < 382*3){
-      stopwise();
-    }
-    else if(count < 382*5){
-      t_anticlockwise();
-    }
-    else{
-      count = 0;
-      serialFlag = 1;
-    }
-  count++;
-  }
-  else
-    serialFlag = 1;
+    flag = 1;
 }
 
 void loop(){
-   int sig = analogRead(A0);
-   int flag = 0;
+   int sig=analogRead(A0);
+//   int flag = 0;
     if(sig > 50){
       for (int i = 0; i < samples; i++){
         Serial.println(sig);
@@ -243,22 +200,159 @@ void loop(){
       flag = 1;
       delay(1000);
     }
-
     inputs = Serial.read();
+    
+    if(flag){
+      if(inputs=='1'){
+        unsigned int count =0;
+       for(count=0;count<16;count++){
+         b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();
+         b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();
+         b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();
+         b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();
+         b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();b_anticlockwise();
+         b_anticlockwise();b_anticlockwise();b_anticlockwise();
+         delay(10);
+        }
+        for( count=0;count<32;count++) {   //bottom_anticlock
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          delay(10);
+        }
+        
+        
+        
+        for( count=0;count<16;count++) {    //top_anticlock
+         b_clockwise();b_clockwise();b_clockwise();b_clockwise();b_clockwise();
+         b_clockwise();b_clockwise();b_clockwise();b_clockwise();b_clockwise();
+         b_clockwise();b_clockwise();b_clockwise();b_clockwise();b_clockwise();
+         b_clockwise();b_clockwise();b_clockwise();b_clockwise();b_clockwise();
+         b_clockwise();b_clockwise();b_clockwise();b_clockwise();b_clockwise();
+         b_clockwise();b_clockwise();b_clockwise();
+         delay(10);
+        }       
+        for( count=0;count<32;count++) {    //top_anticlock
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         delay(10);
+        }   
+        flag=0;
+      }
+      if(inputs=='2'){
+        unsigned int count =0;
+       for( count=0;count<32;count++) {    //top_anticlock
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         t_clockwise();t_clockwise();t_clockwise();t_clockwise();
+         delay(10);
+        }   
+        for( count=0;count<32;count++) {   //bottom_anticlock
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          t_anticlockwise();t_anticlockwise();t_anticlockwise();t_anticlockwise();
+          delay(10);
+        }
+        }       
+        
+        flag=0;
+      }
+      /*
+        if(inputs=='1'){  // plastic
+          if(count < 382){   //move bottom_anticlockwise durint 382
+            b_anticlockwise();
+          }
+          else if(count < 30+382 *3){ //move top_anticlockwise durint 382*2
+            t_anticlockwise();
+          }
+          else if(count < 130 + 382 *3){ //stop during 100
+            stopwise();
+          }
+          else if(count < 130 + 382 *4){        ////bottom_clockwise durint 382
+            b_clockwise();
+          }
+          else if(count < 160 + 382 *6){        ////top_clockwise durint 382*2
+             t_clockwise();
+          }
+          else{
+            count = 0;
+            flag = 0;
+          }
+        count++;
+      }
 
-      if(flag && inputs >0 ){
+      if(inputs=='2'){  // can
+          if(count < 382){   //move bottom_anticlockwise durint 382
+            b_clockwise();
+          }
+      else if(count < 30+382 *3){ //move top_clockwise durint 382*2
+          t_anticlockwise();
+      }
+      else if(count < 130 + 382 *3){ //stop during 100
+        stopwise();
+      }
+      else if(count < 130 + 382 *4){        ////bottom_anticlockwise during 382
+        b_anticlockwise();
+      }
+      else if(count < 160 + 382 *6){        ////top_anticlockwise during 382*2
+        t_clockwise();
+     }
+      else{
+      count = 0;
+      flag = 0;
+      }
+    count++;
+    }
+    
+    if(inputs=='3'){
+      if(count < 382*2+30){   //move top_clockwise durint 382*2
+        t_clockwise();
+      }
+      else if(count < 130 + 382 *2){ //stop during 100
+        stopwise();
+      }
+      else if(count < 160 + 382 *4){  //move top_clockwise durint 382*2
+        t_anticlockwise();
+      }
+      else{
+        count = 0;
+        flag = 0;
+      }
+    count++;
+    }
+    else
+      flag = 0;*/
+    
+}
+        /*
          if(inputs == '1')
           digitalWrite(D1,HIGH);
          else if(inputs=='2')
           digitalWrite(D2,HIGH);
          delay(2000);
+
+         
          if(inputs == '1')
           digitalWrite(D1,LOW);
          else if(inputs=='2')
           digitalWrite(D2,LOW);
-          
-       }
-      
-}
+    }
+}*/
+
+
+
 
 
