@@ -3,6 +3,7 @@
 // Adapted by Mallinson-electrical
 #define TRUE 1
 #define FALSE 0
+#define samples 256
 //declare variables for the motor pins
 int motorPin1 = D8;    // Arduino pin 8 to In 1 on the ULN2003
 int motorPin2 = D7;    // Arduino pin 9 to In 2 on the ULN2003
@@ -16,7 +17,6 @@ int motorPin44 = D1;   // Arduino pin 11 to In 4 on the ULN2003
 
 
 int motorSpeed = 1250;  // set speed of 28BYJ-48 stepper,
-
 //max frequency is 100hz, so max speed is 1250
 
 //(100 steps per second 8 pulses per step so 10000 divided by 8)
@@ -24,7 +24,7 @@ int motorSpeed = 1250;  // set speed of 28BYJ-48 stepper,
 int count = 0;          // count of steps made
 int countt = 0;
 int inputs;
-int serialFlag=1;
+int serialFlag=0;
 int countsperrev = 510; // number of steps per full revolution- actually 509.5 as gear ratio is 63.684:1 apx
 int revolutionsCW = 1; // number of revs required clockwise
 int revolutionsCCW = 3; // number of revs required counterclockwise
@@ -45,8 +45,6 @@ void setup() {
   pinMode(motorPin44, OUTPUT);
   
   Serial.begin(115200);
-  Serial.println("Select direction.... 1 or 2");
-  Serial.println(setTurnsCW*1.5);
 }
 /*
 void rotate(int dir){
@@ -200,14 +198,12 @@ void stepper(int dir){
 }*/
   if(dir==1){
     if(count < 382*2){
-      if(count==1) Serial.println("anticlockwise");
       t_anticlockwise();
     }
     else if(count < 382*3){
       stopwise();
     }
     else if(count < 382*5){
-      if(count==setTurnsCW) Serial.println("clockwise");
       t_clockwise();
     }
     else{
@@ -218,14 +214,12 @@ void stepper(int dir){
   }
   else if(dir==2){
     if(count < 382*2 ){
-      if(count==1) Serial.println("clockwise");
       t_clockwise();
     }
     else if(count < 382*3){
       stopwise();
     }
     else if(count < 382*5){
-      if(count==setTurnsCW) Serial.println("anticlockwise");
       t_anticlockwise();
     }
     else{
@@ -239,30 +233,32 @@ void stepper(int dir){
 }
 
 void loop(){
-  if(Serial.available()){
-   int input = analogRead(A0);
-    if(input > 50){
-      
+   int sig = analogRead(A0);
+   int flag = 0;
+    if(sig > 50){
       for (int i = 0; i < samples; i++){
-        Serial.println(input);
-        input = analogRead(A0);
-        
+        Serial.println(sig);
+        sig = analogRead(A0);
       }
+      flag = 1;
       delay(1000);
     }
-    
-    if(serialFlag==1 ){
-      if(inputs = Serial.parseInt()){
-  
-        serialFlag = 0;
-      }
-    }
-    if(serialFlag==0){
-      stepper(inputs);
-    }
-  }
+
+    inputs = Serial.read();
+
+      if(flag && inputs >0 ){
+         if(inputs == '1')
+          digitalWrite(D1,HIGH);
+         else if(inputs=='2')
+          digitalWrite(D2,HIGH);
+         delay(2000);
+         if(inputs == '1')
+          digitalWrite(D1,LOW);
+         else if(inputs=='2')
+          digitalWrite(D2,LOW);
+          
+       }
+      
 }
-
-
 
 
