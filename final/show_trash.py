@@ -39,12 +39,20 @@ for e in range(1,samples):
         print("pla :",percent)
     pla = np.amax([pla1,pla2])
     dic['pla'] = pla
-
     ret = max(dic, key = dic.__getitem__)
-    print(ret,dic[ret])
+    print("This is ",ret,dic[ret])
+
+    first = 0
+    if ret == 'pla':
+        first = 1
+    elif ret == 'can':
+        first= 2
+    myPort.write(str(first).encode('utf-8'))
+
+
+    
     chart = plt.plot(spect)
     plt.plot(real_data)
     plt.grid(True)
     plt.show()
     
-
