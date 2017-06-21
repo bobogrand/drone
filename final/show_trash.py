@@ -1,7 +1,7 @@
 import serial
 import matplotlib.pyplot as plt
 import numpy as np
-
+import time
 myPort = serial.Serial('COM4',115200)
 print("Connecting Serail Port 4...")
 
@@ -12,12 +12,13 @@ for e in range(1,samples):
     for count in range(samples):
         data =  myPort.readline()
         data = data[:-2].decode()
-        data = float(data)
+        if data == "":
+            break
         real_data.append(data)
     result = np.fft.fft(real_data)
     
     spect = np.abs(result[128:samples-5])
-    max_frq = np.argmax(spect)
+    max_frq = np.argmax(spect) 
     print("계산중")
     print(max_frq)
     total  = np.sum(spect)
@@ -49,10 +50,10 @@ for e in range(1,samples):
         first= 2
     myPort.write(str(first).encode('utf-8'))
 
-
     
     chart = plt.plot(spect)
     plt.plot(real_data)
     plt.grid(True)
     plt.show()
-    
+    time.sleep(3)
+
